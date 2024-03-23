@@ -1,20 +1,17 @@
 
 import { error } from '@sveltejs/kit';
 import {Message, getSSLHubRpcClient} from "@farcaster/hub-nodejs";
+import { PUBLIC_BASE_URL } from '$env/static/public';
 
 import render from './gameloop.js';
 
-const HUB_URL = 'http://localhost:5174/';
+const HUB_URL = PUBLIC_BASE_URL;
+const client = HUB_URL ? getSSLHubRpcClient(HUB_URL) : undefined;
 
 
-function getHtml(frameImage, url) {
-  let framePostUrl = 'https://'+url.host+"/api";
-  if(url.host.includes("localhost")){
-    framePostUrl = 'http://'+url.host+"/api";
-  }
-
-
-
+function getHtml(frameImage) {
+  const framePostUrl = HUB_URL+"/api";
+  
 const str  = `
 <html lang="en">
           <head>
@@ -36,7 +33,7 @@ const str  = `
 /** @type {import('./$types').RequestHandler} */
 export async function POST({ request, url }) {
 
-  const data = await parseData(await request.json(), 'https://' + url.host +'/' );
+  const data = await parseData(await request.json());
  
   console.log(data)
   //console.log(JSON.stringify(await request.json(), null, 2));
@@ -46,20 +43,7 @@ export async function POST({ request, url }) {
 }
 
 
-/*
-/** @type {import('./$types').RequestHandler} * /
-export async function GET({ request }) {
-	
-	const image = await render(33,11);
-
-	return new Response(String(getHtml(image)));
-}
-*/
-
-//onst HUB_URL = process.env['HUB_URL']
-
-async function parseData(req, HUB_URL) {
-    const client = HUB_URL ? getSSLHubRpcClient(HUB_URL) : undefined;
+async function parseData(req) {
 
         const reqData =req;
       console.log({reqData})
