@@ -7,8 +7,12 @@ import render from './gameloop.js';
 const HUB_URL = 'http://localhost:5174/';
 
 
-function getHtml(frameImage) {
-  const framePostUrl = HUB_URL+ "api"
+function getHtml(frameImage, url) {
+  let framePostUrl = 'https://'+url.host+"/api";
+  if(url.host.includes("localhost")){
+    framePostUrl = 'http://'+url.host+"/api";
+  }
+
 
 
 const str  = `
@@ -30,15 +34,17 @@ const str  = `
 }
 
 /** @type {import('./$types').RequestHandler} */
-export async function POST({ request, params }) {
-  const data = await parseData(await request.json());
+export async function POST({ request, url }) {
+
+  const data = await parseData(await request.json(), 'https://' + url.host +'/' );
  
   console.log(data)
   //console.log(JSON.stringify(await request.json(), null, 2));
 	const image = await render(data.fid, data.buttonId);
 
-	return new Response(String(getHtml(image)));
+	return new Response(String(getHtml(image, url.host)));
 }
+
 
 /*
 /** @type {import('./$types').RequestHandler} * /
@@ -51,11 +57,12 @@ export async function GET({ request }) {
 */
 
 //onst HUB_URL = process.env['HUB_URL']
-const client = HUB_URL ? getSSLHubRpcClient(HUB_URL) : undefined;
 
-async function parseData(req) {
+async function parseData(req, HUB_URL) {
+    const client = HUB_URL ? getSSLHubRpcClient(HUB_URL) : undefined;
+
         const reqData =req;
-console.log({reqData})
+      console.log({reqData})
 
         // Process the vote
         // For example, let's assume you receive an option in the body
