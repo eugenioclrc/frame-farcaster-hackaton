@@ -1,14 +1,12 @@
 
 import ROT from 'rot-js';
-import { createCanvas, loadImage } from 'canvas';
-
+import SvgDisplay from "./svg.js";
+ 
 import { JSONFilePreset } from 'lowdb/node'
 
 // Read or create db.json
 const defaultData = { gameplays: {} };
 const db = await JSONFilePreset('db.json', defaultData);
-
-global.requestAnimationFrame = (cb ) => { setTimeout(cb, 10)};
 
 function setTemporaryOverlayMessage(e) {
     console.log(e);
@@ -25,29 +23,14 @@ function setTemporaryOverlayMessage(e) {
 
 let DEBUG_ALL_EXPLORED = false;
 
-global.canvas = {};
-
 export default async function render(userId, action) {
 
-const document = {
-    createCanvas, loadImage, createElement: (tag) => {
-        if(tag === 'canvas') {
-            global.canvas[userId] = createCanvas(60, 25);
-            return global.canvas[userId];
-        }
-        
-        throw new Error(`Unknown tag: ${tag}`);
-    }
-};
-
-global.document = document;
-
     const WIDTH = 60, HEIGHT = 25;
-    const STORAGE_KEY =  '-savegame';
     ROT.RNG.setSeed(userId);
 
-    const display = new ROT.Display({width: 60, height: 25, fontSize: 16, fontFamily: 'monospace'});
-
+    //const display = new ROT.Display({width: 60, height: 25, fontSize: 16, fontFamily: 'monospace'});
+    const display = new SvgDisplay({width: 60, height: 25, fontSize: 16, fontFamily: 'monospace'});
+    
     const EQUIP_MAIN_HAND = 0;
     const EQUIP_OFF_HAND = 1;
 
@@ -1153,11 +1136,11 @@ global.document = document;
 
     await runAction(['save-game']);
 
-    // wait 100 ms before starting the game loop
-    await new Promise(resolve => {
-        setTimeout(resolve, 100);
-    });
-    const ret = global.canvas[userId].toDataURL();
-    //global.canvas = {};
-    return ret;
+  
+    const svgString = display.render();
+
+    // Convert the SVG string to a Base64-encoded string
+    const base64EncodedSVG = Buffer.from(svgString).toString('base64');
+
+    return `data:image/svg+xml;base64,${base64EncodedSVG}`;
 }
