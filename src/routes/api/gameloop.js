@@ -1,12 +1,29 @@
 
 import ROT from 'rot-js';
 import SvgDisplay from "./svg.js";
+//import { PRIVATE_REDIS_HOST, PRIVATE_REDIS_PORT, PRIVATE_REDIS_PASSWORD } from '$env/static/private';
  
-import { JSONFilePreset } from 'lowdb/node'
+// import { JSONFilePreset } from 'lowdb/node'
 
 // Read or create db.json
-const defaultData = { gameplays: {} };
-const db = await JSONFilePreset('db.json', defaultData);
+//const defaultData = { gameplays: {} };
+//const db = await JSONFilePreset('db.json', defaultData);
+
+/*
+import { createClient } from 'redis';
+
+const redis = createClient({
+    password: PRIVATE_REDIS_PASSWORD,
+    socket: {
+        host: PRIVATE_REDIS_HOST,
+        port: PRIVATE_REDIS_PORT
+    }
+});
+*/
+
+const db = { gameplays: {} };
+
+
 
 function setTemporaryOverlayMessage(e) {
     console.log(e);
@@ -1026,8 +1043,7 @@ export default async function render(userId, action) {
             break;
         }
         case 'restore-game': {
-
-            let json = db.data.gameplays[userId] || null;
+            let json = db.gameplays[userId] || null;
             if (json === null) {
                 setTemporaryOverlayMessage("There is no saved game.");
             } else {
@@ -1041,9 +1057,11 @@ export default async function render(userId, action) {
         case 'save-game': {
             let json = serializeGlobalState();
 
+            //await client.set("user", JSON.stringify(obj));
+            //const usersData = await client.get("user");
             // @todo: this is disabled for now
-            db.data.gameplays[userId] = json;
-            await db.write();
+            db.gameplays[userId] = json;
+            //await db.write();
             // window.localStorage.setItem(STORAGE_KEY, json);
             setTemporaryOverlayMessage("Saved game.");
             break;
