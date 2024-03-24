@@ -3,6 +3,7 @@
 </script>
 
 <svelte:head>
+    <meta property="of:accepts:xmtp" content="2024-02-01" />
     <meta property="og:image" content="{PUBLIC_BASE_URL}/splash.png" />
         <meta property="fc:frame" content="vNext" />
         <meta property="fc:frame:image" content="{PUBLIC_BASE_URL}/splash.png" />

@@ -16,6 +16,7 @@ const str  = `
 <html lang="en">
           <head>
           <meta property="fc:frame" content="vNext" />
+          <meta property="of:accepts:xmtp" content="2024-02-01" />
           <meta property="fc:frame:image" content="${frameImage}" />
           <meta property="fc:frame:image:aspect_ratio" content="1:1" />
           <meta property="fc:frame:post_url" content="${framePostUrl}?r=3" />
