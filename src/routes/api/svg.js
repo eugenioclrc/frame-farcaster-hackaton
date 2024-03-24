@@ -117,7 +117,7 @@ export default class Svg {
             //svg += `<text x="${x*(this.opts.fontSize +4)+ 6}" y="${y*(this.opts.fontSize + 4)+14}" fill="${cell.fg}" ${font}>${cell.ch}</text>`;
             //<text style="fill:black;font-family:Arial;font-size:20px" x="448.22" y="389.36" id="e2_texte" xml:space="preserve" textLength="84.74864582438818" transform="matrix(1.67759 -0.0211904 0.0321802 1.10468 -304.469 -35.5712)">hp(100)</text>
         }
-        this.messages.forEach((message, i) => {
+        this.messages.reverse().forEach((message, i) => {
             const font = `font-family="${this.opts.fontFamily}" font-size="${Math.ceil(this.opts.fontSize * 1.2)}" fill="white"`;
             svg += `<text ${font} x="16" y="${(this.opts.height + 4)*(this.opts.fontSize + 5) + (i*(this.opts.fontSize + 6))}">${message}</text>`;
            
