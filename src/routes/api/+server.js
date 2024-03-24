@@ -35,7 +35,6 @@ export async function POST({ request, url }) {
 
   const data = await parseData(await request.json());
  
-  console.log(data)
   //console.log(JSON.stringify(await request.json(), null, 2));
 	const image = await render(data.fid, data.buttonId);
 

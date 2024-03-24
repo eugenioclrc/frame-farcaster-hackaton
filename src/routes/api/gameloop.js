@@ -42,11 +42,11 @@ let DEBUG_ALL_EXPLORED = false;
 
 export default async function render(userId, action) {
 
-    const WIDTH = 60, HEIGHT = 25;
+    const WIDTH = 54, HEIGHT = 44;
     ROT.RNG.setSeed(userId);
 
     //const display = new ROT.Display({width: 60, height: 25, fontSize: 16, fontFamily: 'monospace'});
-    const display = new SvgDisplay({width: 60, height: 25, fontSize: 16, fontFamily: 'monospace'});
+    const display = new SvgDisplay({width: WIDTH, height: HEIGHT, fontSize: 16, fontFamily: 'monospace'});
     
     const EQUIP_MAIN_HAND = 0;
     const EQUIP_OFF_HAND = 1;
@@ -89,6 +89,9 @@ export default async function render(userId, action) {
     function print(message, className) {
         messages.push([message, className]);
         messages.splice(0, messages.length - MAX_MESSAGE_LINES);
+        display.addMessages([message, className]);
+        messages = display.messages;
+
         drawMessages();
     }
 
@@ -411,6 +414,8 @@ export default async function render(userId, action) {
         //document.querySelector("#health-bar").style.width = `${Math.ceil(100*player.hp/player.effective_max_hp)}%`;
         //document.querySelector("#health-text").textContent = ` HP: ${player.hp} / ${player.effective_max_hp}`;
 
+        display.setHp(player.hp, player.effective_max_hp);
+
         let lightMap = computeLightMap(player.location, tileMap);
         let glyphMap = computeGlyphMap(entities);
 
@@ -466,7 +471,7 @@ export default async function render(userId, action) {
             entities: Array.from(entities),
             playerId: player.id,
             tileMap: tileMap,
-            messages: messages,
+            messages: display.messages,
             nextEntityId: createEntity.id,
             rngState: ROT.RNG.getState(),
         };
@@ -483,6 +488,7 @@ export default async function render(userId, action) {
         Object.assign(tileMap, saved.tileMap);
         updateTileMapFov(tileMap);
         messages = saved.messages;
+        display.messages = messages;
         ROT.RNG.setState(saved.rngState);
     }
 
