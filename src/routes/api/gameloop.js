@@ -1,6 +1,8 @@
 
 import ROT from 'rot-js';
 import SvgDisplay from "./svg.js";
+import { optimize } from 'svgo';
+
 //import { PRIVATE_REDIS_HOST, PRIVATE_REDIS_PORT, PRIVATE_REDIS_PASSWORD } from '$env/static/private';
  
 // import { JSONFilePreset } from 'lowdb/node'
@@ -1163,8 +1165,16 @@ export default async function render(userId, action) {
   
     const svgString = display.render();
 
+
+    const result = optimize(svgString, {
+        datauri: 'base64',
+    });
+    if(result.data) {
+        return result.data;
+    }
     // Convert the SVG string to a Base64-encoded string
     const base64EncodedSVG = Buffer.from(svgString).toString('base64');
 
     return `data:image/svg+xml;base64,${base64EncodedSVG}`;
 }
+
